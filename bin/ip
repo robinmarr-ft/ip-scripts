@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+const yargs = require('yargs')
+
+const { ip } = require('../index.js')
+const pkg = require('../package.json')
+
+ip(yargs, pkg)

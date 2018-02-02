@@ -1,0 +1,29 @@
+{
+  "name": "ip-scripts",
+  "version": "1.0.0",
+  "description": "a set of npm useful scripts",
+  "main": "index.js",
+  "bin": {
+    "ip": "./bin/ip",
+    "ip-s": "./bin/ip-s",
+    "ip-p": "./bin/ip-p"
+  },
+  "scripts": {
+    "lint": "standard"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs-extra": "^5.0.0",
+    "mz": "^2.7.0",
+    "yargs": "^11.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "^4.0.0",
+    "eslint": "^4.16.0",
+    "lodash.snakecase": "^4.1.1",
+    "reify": "^0.13.7",
+    "rollup": "^0.55.0",
+    "standard": "^10.0.3"
+  }
+}

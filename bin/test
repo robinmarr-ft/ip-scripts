@@ -1,0 +1,66 @@
+#!/usr/bin/env node
+
+const { join, resolve, parse } = require('path');
+const snakeCase = require('lodash.snakecase');
+const fs = require('fs');
+
+const log = (opts, output) => {
+  if ( opts.verbose ) {
+    console.log(output);
+  }
+}
+
+const build = (obj, name, config) => {
+  if (typeof obj === 'string') {
+    const exportString = `export ${snakeCase(name).toUpperCase()}="${obj}'"\n'`;
+    log(exportString);
+  } else if (Array.isArray(obj)) {
+    obj.map((value, index) => {
+      build(value, `${name}_${index}`, config);
+    });
+  } else {
+    Object.keys(obj).map((key) => build(obj[key], `${name}_${key}`, config))
+  }
+}
+
+const jsonToEnv = (config) => {
+    const inputFile = config.input;
+
+    const optionKey = config.key ? config.key.value : null;
+
+    if ( !(/\.json/).test(inputFile) ) {
+      return process.stdout.write('Requires json input file\n');
+    }
+
+    const jsonFile = resolve(inputFile);
+    log(config, 'Input file: ' + jsonFile + '\n');
+    // TODO: Validate json file first
+    const json = require(jsonFile);
+    const inputObj = optionKey ? json[optionKey] : json;
+    const prefix = config.prefix ? config.prefix
+                 : optionKey ? optionKey : parse(jsonFile).base
+
+    build(inputObj, prefix, config);
+    log(config, 'Done\n');
+
+    // TODO: Close fd
+    return;
+};
+
+
+module.exports = jsonToEnv;
+jsonToEnv({
+  input: join(__dirname, 'package.json'),
+  output: join(__dirname, 'package.json'),
+  verbose: true
+})
+
+
+
+// fs.readdir(`${process.cwd()}/cmds`, (err, dir) => { console.log(dir)})
+// { ip: [ 'help', 'test', 'vault', 'docker', 'mocha', 'bootstrap' ],
+//   bootstrap: [ 'git', 'lerna', 'vault' ],
+//   vault: [ 'read', 'env' ],
+//   docker: [ 'exec', 'log', 'prune', 'up' ],
+//   subtree: [ 'eject', 'dev', 'uneject', 'remotes' ] }
+
